@@ -12,6 +12,6 @@ get_first = "allow"
 len_zero = "allow"
 
 [dependencies]
-derive-new = "^0.6.0"
 anyhow = "^1.0.86"
+derive-new = "^0.6.0"
 tokio = { version = "^1.37.0", features = ["full"] }
