@@ -23,7 +23,7 @@ async fn eth_websocket() -> Result<()> {
 	"jsonrpc": "2.0",
 	"id": 1,
 	"method": "eth_subscribe",
-	"params": ["newHeads"]
+	"params": ["alchemy_minedTransactions"]
 	});
 
 	write.send(Message::Text(subscribe_message.to_string())).await?;
@@ -75,49 +75,38 @@ pub struct WebsocketMessage {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WebSocketParams {
-    result: EthereumBlock,
+    result: MinedTransactions,
     subscription: String,
 }
 
-//TODO!!!!!: utilize everything below this line
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+struct MinedTransactions {
+    removed: bool,
+    transaction: Transaction,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct EthereumBlock {
-    base_fee_per_gas: String,
-    blob_gas_used: String,
-    difficulty: String,
-    excess_blob_gas: String,
-    extra_data: String,
-    gas_limit: String,
-    gas_used: String,
+struct Transaction {
+    block_hash: String,
+    block_number: String,
+    from: String,
+    gas: String,
+    gas_price: String,
     hash: String,
-    logs_bloom: String,
-    miner: String,
-    mix_hash: String,
+    input: String,
     nonce: String,
-    number: String,
-    parent_beacon_block_root: String,
-    parent_hash: String,
-    receipts_root: String,
-    sha3_uncles: String,
-    size: String,
-    state_root: String,
-    timestamp: String,
-    transactions_root: String,
-    withdrawals: Vec<Withdrawal>,
-    withdrawals_root: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct Withdrawal {
-    address: String,
-    amount: String,
-    index: String,
-    validator_index: String,
-}
-
-// You can use this function to parse the JSON string into the EthereumBlock struct
-pub fn parse_ethereum_block(json_str: &str) -> Result<EthereumBlock, serde_json::Error> {
-    serde_json::from_str(json_str)
+    to: Option<String>,
+    transaction_index: String,
+    value: String,
+    #[serde(rename = "type")]
+    transaction_type: String,
+    v: String,
+    r: String,
+    s: String,
+    chain_id: String,
+    max_fee_per_gas: Option<String>,
+    max_priority_fee_per_gas: Option<String>,
+    access_list: Option<Vec<Value>>,
+    y_parity: Option<String>,
 }
